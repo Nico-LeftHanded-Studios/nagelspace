@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nagelspace - Family Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-danger {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn-success {
+            background: #388e3c;
+            color: white;
+        }
+
+        .auth-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 400px;
+            margin: 100px auto;
+        }
+
+        .auth-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: #e0e0e0;
+        }
+
+        .content-area {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-height: 500px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .post-form, .message-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .post-form textarea, .message-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .post, .message, .bulletin-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #f0f0f0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .post-header, .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post-author, .message-sender {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .post-date, .message-date {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .post-content, .message-content {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .calendar-header {
+            text-align: center;
+            font-weight: bold;
+            padding: 10px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+        }
+
+        .calendar-day {
+            min-height: 100px;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f9f9f9;
+            position: relative;
+        }
+
+        .calendar-day-number {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #667eea;
+        }
+
+        .calendar-event {
+            background: #667eea;
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 11px;
+            margin-bottom: 3px;
+            cursor: pointer;
+        }
+
+        .event-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: #388e3c;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .month-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .month-nav h3 {
+            color: #667eea;
+        }
+
+        .pending-user {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pending-user-info {
+            flex: 1;
+        }
+
+        .pending-user-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .admin-badge {
+            background: #ffd700;
+            color: #333;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="authContainer">
+        <div class="auth-container">
+            <div class="logo" style="text-align: center; margin-bottom: 30px;">Nagelspace</div>
+            <h2 id="authTitle">Sign In</h2>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="authEmail" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="authPassword" placeholder="Enter your password">
+            </div>
+            <div class="form-group" id="nameGroup" style="display: none;">
+                <label>Display Name</label>
+                <input type="text" id="authName" placeholder="Your full name">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" id="authButton">Sign In</button>
+            <button class="btn btn-secondary" style="width: 100%;" id="toggleAuth">Need an account? Sign Up</button>
+            <div id="authError" class="error"></div>
+            <div id="authSuccess" class="success"></div>
+        </div>
+    </div>
+
+    <div class="container hidden" id="mainContainer">
+        <div class="header">
+            <div class="logo">Nagelspace</div>
+            <div class="user-info">
+                <span id="userName"></span>
+                <button class="btn btn-secondary" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="posts">Family Posts</button>
+            <button class="nav-tab" data-tab="messages">Direct Messages</button>
+            <button class="nav-tab" data-tab="bulletin">Bulletin Board</button>
+            <button class="nav-tab" data-tab="calendar">Family Calendar</button>
+            <button class="nav-tab hidden" data-tab="admin" id="adminTab">Admin Panel</button>
+        </div>
+
+        <div class="content-area">
+            <div id="postsTab" class="tab-content">
+                <h2>Family Posts</h2>
+                <div class="post-form">
+                    <textarea id="postContent" placeholder="Share something with the family..."></textarea>
+                    <button class="btn btn-primary" id="submitPost" style="margin-top: 10px;">Post</button>
+                </div>
+                <div id="postsList"></div>
+            </div>
+
+            <div id="messagesTab" class="tab-content hidden">
+                <h2>Direct Messages</h2>
+                <div class="message-form">
+                    <select class="user-select" id="messageRecipient">
+                        <option value="">Select a family member...</option>
+                    </select>
+                    <textarea id="messageContent" placeholder="Write a private message..." style="margin-top: 10px;"></textarea>
+                    <button class="btn btn-primary" id="submitMessage" style="margin-top: 10px;">Send Message</button>
+                </div>
+                <div id="messagesList"></div>
+            </div>
+
+            <div id="bulletinTab" class="tab-content hidden">
+                <h2>Bulletin Board</h2>
+                <div class="post-form">
+                    <input type="text" id="bulletinTitle" placeholder="Announcement title..." style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; margin-bottom: 10px;">
+                    <textarea id="bulletinContent" placeholder="Important family announcement..."></textarea>
+                    <button class="btn btn-primary" id="submitBulletin" style="margin-top: 10px;">Post Announcement</button>
+                </div>
+                <div id="bulletinList"></div>
+            </div>
+
+            <div id="calendarTab" class="tab-content hidden">
+                <h2>Family Calendar</h2>
+                <div class="event-form">
+                    <div class="form-group">
+                        <label>Event Title</label>
+                        <input type="text" id="eventTitle" placeholder="Event name">
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="eventDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Time (optional)</label>
+                        <input type="time" id="eventTime">
+                    </div>
+                    <button class="btn btn-primary" id="submitEvent">Add Event</button>
+                </div>
+                <div class="month-nav">
+                    <button class="btn btn-secondary" id="prevMonth">← Previous</button>
+                    <h3 id="currentMonth"></h3>
+                    <button class="btn btn-secondary" id="nextMonth">Next →</button>
+                </div>
+                <div class="calendar" id="calendarGrid"></div>
+            </div>
+
+            <div id="adminTab" class="tab-content hidden">
+                <h2>Admin Panel</h2>
+                <h3 style="margin-top: 20px; margin-bottom: 15px;">Pending Account Requests</h3>
+                <div id="pendingUsersList"></div>
+                <h3 style="margin-top: 30px; margin-bottom: 15px;">All Users</h3>
+                <div id="allUsersList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getDatabase, ref, push, set, onValue, get, update } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // Firebase configuration - REPLACE WITH YOUR OWN CONFIG
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA58mFuckSdJX-zYGKy3j3vtl8LKOB2NEk",
+  authDomain: "nagelspace-19c23.firebaseapp.com",
+  databaseURL: "https://nagelspace-19c23-default-rtdb.firebaseio.com",
+  projectId: "nagelspace-19c23",
+  storageBucket: "nagelspace-19c23.firebasestorage.app",
+  messagingSenderId: "906833958270",
+  appId: "1:906833958270:web:23ee6ba5c33bb4e35ecf2f",
+  measurementId: "G-SZDLVHV9DK"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        let currentUser = null;
+        let currentUserData = null;
+        let isSignUp = false;
+        let currentMonth = new Date();
+
+        // Auth Elements
+        const authContainer = document.getElementById('authContainer');
+        const mainContainer = document.getElementById('mainContainer');
+        const authEmail = document.getElementById('authEmail');
+        const authPassword = document.getElementById('authPassword');
+        const authName = document.getElementById('authName');
+        const authButton = document.getElementById('authButton');
+        const toggleAuth = document.getElementById('toggleAuth');
+        const authError = document.getElementById('authError');
+        const authSuccess = document.getElementById('authSuccess');
+        const nameGroup = document.getElementById('nameGroup');
+        const authTitle = document.getElementById('authTitle');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const userName = document.getElementById('userName');
+        const adminTab = document.getElementById('adminTab');
+
+        // Toggle between sign in and sign up
+        toggleAuth.addEventListener('click', () => {
+            isSignUp = !isSignUp;
+            if (isSignUp) {
+                authTitle.textContent = 'Request Account';
+                authButton.textContent = 'Request Account';
+                toggleAuth.textContent = 'Already have an account? Sign In';
+                nameGroup.style.display = 'block';
+            } else {
+                authTitle.textContent = 'Sign In';
+                authButton.textContent = 'Sign In';
+                toggleAuth.textContent = 'Need an account? Sign Up';
+                nameGroup.style.display = 'none';
+            }
+            authError.textContent = '';
+            authSuccess.textContent = '';
+        });
+
+        // Handle auth
+        authButton.addEventListener('click', async () => {
+            const email = authEmail.value.trim();
+            const password = authPassword.value;
+            const name = authName.value.trim();
+
+            authError.textContent = '';
+            authSuccess.textContent = '';
+
+            try {
+                if (isSignUp) {
+                    if (!name) {
+                        authError.textContent = 'Please enter your name';
+                        return;
+                    }
+                    // Create account
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    await updateProfile(userCredential.user, { displayName: name });
+                    
+                    // Add to pending users
+                    await set(ref(db, `users/${userCredential.user.uid}`), {
+                        name: name,
+                        email: email,
+                        status: 'pending',
+                        isAdmin: false,
+                        createdAt: Date.now()
+                    });
+                    
+                    authSuccess.textContent = 'Account created! Please wait for admin approval.';
+                    await signOut(auth);
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
+            } catch (error) {
+                authError.textContent = error.message;
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth);
+        });
+
+        // Auth state observer
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // Check user status
+                const userRef = ref(db, `users/${user.uid}`);
+                const snapshot = await get(userRef);
+                
+                if (!snapshot.exists()) {
+                    // First user becomes admin
+                    const allUsersSnapshot = await get(ref(db, 'users'));
+                    const isFirstUser = !allUsersSnapshot.exists();
+                    
+                    await set(userRef, {
+                        name: user.displayName || user.email,
+                        email: user.email,
+                        status: 'approved',
+                        isAdmin: isFirstUser,
+                        createdAt: Date.now()
+                    });
+                    currentUserData = {
+                        name: user.displayName || user.email,
+                        email: user.email,
+                        status: 'approved',
+                        isAdmin: isFirstUser
+                    };
+                } else {
+                    currentUserData = snapshot.val();
+                }
+
+                if (currentUserData.status !== 'approved') {
+                    authError.textContent = 'Your account is pending admin approval.';
+                    await signOut(auth);
+                    return;
+                }
+
+                currentUser = user;
+                authContainer.classList.add('hidden');
+                mainContainer.classList.remove('hidden');
+                userName.textContent = currentUserData.name + (currentUserData.isAdmin ? ' (Admin)' : '');
+                
+                if (currentUserData.isAdmin) {
+                    adminTab.classList.remove('hidden');
+                }
+                
+                loadAllData();
+            } else {
+                currentUser = null;
+                currentUserData = null;
+                authContainer.classList.remove('hidden');
+                mainContainer.classList.add('hidden');
+            }
+        });
+
+        // Tab Navigation
+        const tabs = document.querySelectorAll('.nav-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                tabContents.forEach(content => content.classList.add('hidden'));
+                document.getElementById(`${tabName}Tab`).classList.remove('hidden');
+
+                if (tabName === 'admin') {
+                    loadAdminPanel();
+                }
+            });
+        });
+
+        // Admin Panel
+        const pendingUsersList = document.getElementById('pendingUsersList');
+        const allUsersList = document.getElementById('allUsersList');
+
+        async function loadAdminPanel() {
+            const usersRef = ref(db, 'users');
+            const snapshot = await get(usersRef);
+            
+            const pending = [];
+            const approved = [];
+            
+            snapshot.forEach((childSnapshot) => {
+                const userData = { uid: childSnapshot.key, ...childSnapshot.val() };
+                if (userData.status === 'pending') {
+                    pending.push(userData);
+                } else if (userData.status === 'approved') {
+                    approved.push(userData);
+                }
+            });
+
+            if (pending.length === 0) {
+                pendingUsersList.innerHTML = '<p style="color: #999;">No pending requests</p>';
+            } else {
+                pendingUsersList.innerHTML = pending.map(user => `
+                    <div class="pending-user">
+                        <div class="pending-user-info">
+                            <strong>${user.name}</strong> (${user.email})<br>
+                            <small>Requested: ${new Date(user.createdAt).toLocaleString()}</small>
+                        </div>
+                        <div class="pending-user-actions">
+                            <button class="btn btn-success" onclick="approveUser('${user.uid}')">Approve</button>
+                            <button class="btn btn-danger" onclick="rejectUser('${user.uid}')">Reject</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            allUsersList.innerHTML = approved.map(user => `
+                <div class="post">
+                    <strong>${user.name}</strong> (${user.email})
+                    ${user.isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}
+                    <br>
+                    <small>Member since: ${new Date(user.createdAt).toLocaleString()}</small>
+                </div>
+            `).join('');
+        }
+
+        window.approveUser = async function(uid) {
+            await update(ref(db, `users/${uid}`), { status: 'approved' });
+            loadAdminPanel();
+        };
+
+        window.rejectUser = async function(uid) {
+            await set(ref(db, `users/${uid}`), null);
+            loadAdminPanel();
+        };
+
+        // Posts
+        const submitPost = document.getElementById('submitPost');
+        const postContent = document.getElementById('postContent');
+        const postsList = document.getElementById('postsList');
+
+        submitPost.addEventListener('click', async () => {
+            const content = postContent.value.trim();
+            if (!content) return;
+
+            const postRef = push(ref(db, 'posts'));
+            await set(postRef, {
+                author: currentUserData.name,
+                authorId: currentUser.uid,
+                content: content,
+                timestamp: Date.now()
+            });
+
+            postContent.value = '';
+        });
+
+        function loadPosts() {
+            const postsRef = ref(db, 'posts');
+            onValue(postsRef, (snapshot) => {
+                const posts = [];
+                snapshot.forEach((childSnapshot) => {
+                    posts.push({ id: childSnapshot.key, ...childSnapshot.val() });
+                });
+                
+                posts.sort((a, b) => b.timestamp - a.timestamp);
+                
+                postsList.innerHTML = posts.map(post => `
+                    <div class="post">
+                        <div class="post-header">
+                            <span class="post-author">${post.author}</span>
+                            <span class="post-date">${new Date(post.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div class="post-content">${post.content}</div>
+                    </div>
+                `).join('');
+            });
+        }
+
+        // Messages
+        const submitMessage = document.getElementById('submitMessage');
+        const messageContent = document.getElementById('messageContent');
+        const messageRecipient = document.getElementById('messageRecipient');
+        const messagesList = document.getElementById('messagesList');
+
+        async function loadUsers() {
+            const usersRef = ref(db, 'users');
+            const snapshot = await get(usersRef);
+            const users = [];
+            
+            snapshot.forEach((childSnapshot) => {
+                const userData = childSnapshot.val();
+                if (childSnapshot.key !== currentUser.uid && userData.status === 'approved') {
+                    users.push({ id: childSnapshot.key, name: userData.name });
+                }
+            });
+
+            messageRecipient.innerHTML = '<option value="">Select a family member...</option>' +
+                users.map(user => `<option value="${user.id}">${user.name}</option>`).join('');
+        }
+
+        submitMessage.addEventListener('click', async () => {
+            const content = messageContent.value.trim();
+            const recipientId = messageRecipient.value;
+            
+            if (!content || !recipientId) return;
+
+            const messageRef = push(ref(db, 'messages'));
+            await set(messageRef, {
+                senderId: currentUser.uid,
+                senderName: currentUserData.name,
+                recipientId: recipientId,
+                content: content,
+                timestamp: Date.now()
+            });
+
+            messageContent.value = '';
+            messageRecipient.value = '';
+        });
+
+        function loadMessages() {
+            const messagesRef = ref(db, 'messages');
+            onValue(messagesRef, async (snapshot) => {
+                const messages = [];
+                const userCache = {};
+                
+                snapshot.forEach((childSnapshot) => {
+                    const msg = childSnapshot.val();
+                    if (msg.senderId === currentUser.uid || msg.recipientId === currentUser.uid) {
+                        messages.push({ id: childSnapshot.key, ...msg });
+                    }
+                });
+                
+                // Get recipient names
+                for (const msg of messages) {
+                    if (msg.recipientId !== currentUser.uid && !userCache[msg.recipientId]) {
+                        const userSnapshot = await get(ref(db, `users/${msg.recipientId}`));
+                        if (userSnapshot.exists()) {
+                            userCache[msg.recipientId] = userSnapshot.val().name;
+                        }
+                    }
+                }
+                
+                messages.sort((a, b) => b.timestamp - a.timestamp);
+                
+                messagesList.innerHTML = messages.map(msg => {
+                    const isReceived = msg.recipientId === currentUser.uid;
+                    const recipientName = userCache[msg.recipientId] || 'Unknown';
+                    return `
+                        <div class="message">
+                            <div class="message-header">
+                                <span class="message-sender">
+                                    ${isReceived ? 'From: ' + msg.senderName : 'To: ' + recipientName}
+                                </span>
+                                <span class="message-date">${new Date(msg.timestamp).toLocaleString()}</span>
+                            </div>
+                            <div class="message-content">${msg.content}</div>
+                        </div>
+                    `;
+                }).join('');
+            });
+        }
+
+        // Bulletin
+        const submitBulletin = document.getElementById('submitBulletin');
+        const bulletinTitle = document.getElementById('bulletinTitle');
+        const bulletinContent = document.getElementById('bulletinContent');
+        const bulletinList = document.getElementById('bulletinList');
+
+        submitBulletin.addEventListener('click', async () => {
+            const title = bulletinTitle.value.trim();
+            const content = bulletinContent.value.trim();
+            
+            if (!title || !content) return;
+
+            const bulletinRef = push(ref(db, 'bulletin'));
+            await set(bulletinRef, {
+                author: currentUserData.name,
+                title: title,
+                content: content,
+                timestamp: Date.now()
+            });
+
+            bulletinTitle.value = '';
+            bulletinContent.value = '';
+        });
+
+        function loadBulletin() {
+            const bulletinRef = ref(db, 'bulletin');
+            onValue(bulletinRef, (snapshot) => {
+                const items = [];
+                snapshot.forEach((childSnapshot) => {
+                    items.push({ id: childSnapshot.key, ...childSnapshot.val() });
+                });
+                
+                items.sort((a, b) => b.timestamp - a.timestamp);
+                
+                bulletinList.innerHTML = items.map(item => `
+                    <div class="bulletin-item">
+                        <div class="post-header">
+                            <h3 style="color: #667eea; margin-bottom: 5px;">${item.title}</h3>
+                            <span class="post-date">${new Date(item.timestamp).toLocaleString()}</span>
+                        </div>
+                        <p style="margin-top: 10px; color: #666;">${item.content}</p>
+                        <p style="margin-top: 10px; font-size: 12px; color: #999;">Posted by ${item.author}</p>
+                    </div>
+                `).join('');
+            });
+        }
+
+        // Calendar
+        const submitEvent = document.getElementById('submitEvent');
+        const eventTitle = document.getElementById('eventTitle');
+        const eventDate = document.getElementById('eventDate');
+        const eventTime = document.getElementById('eventTime');
+        const calendarGrid = document.
