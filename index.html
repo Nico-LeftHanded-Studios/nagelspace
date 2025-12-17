@@ -61,7 +61,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            transition: all 0.3s ease;
         }
 
         .theme-christmas .logo {
@@ -350,7 +349,6 @@
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             background: #f9f9f9;
-            position: relative;
         }
 
         .calendar-day-number {
@@ -382,7 +380,6 @@
             border-radius: 5px;
             font-size: 11px;
             margin-bottom: 3px;
-            cursor: pointer;
         }
 
         .theme-christmas .calendar-event {
@@ -715,7 +712,7 @@
         }
 
         function applyTheme(theme) {
-            document.body.className = `theme-${theme}`;
+            document.body.className = 'theme-' + theme;
             document.querySelectorAll('.theme-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.dataset.theme === theme) {
@@ -771,7 +768,7 @@
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     await updateProfile(userCredential.user, { displayName: name });
                     
-                    await set(ref(db, `users/${userCredential.user.uid}`), {
+                    await set(ref(db, 'users/' + userCredential.user.uid), {
                         name: name,
                         email: email,
                         status: 'pending',
@@ -795,7 +792,7 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const userRef = ref(db, `users/${user.uid}`);
+                const userRef = ref(db, 'users/' + user.uid);
                 const snapshot = await get(userRef);
                 
                 if (!snapshot.exists()) {
@@ -855,7 +852,7 @@
                 tab.classList.add('active');
                 
                 tabContents.forEach(content => content.classList.add('hidden'));
-                document.getElementById(`${tabName}Tab`).classList.remove('hidden');
+                document.getElementById(tabName + 'Tab').classList.remove('hidden');
 
                 if (tabName === 'admin') {
                     loadAdminPanel();
@@ -885,37 +882,37 @@
             if (pending.length === 0) {
                 pendingUsersList.innerHTML = '<p style="color: #999;">No pending requests</p>';
             } else {
-                pendingUsersList.innerHTML = pending.map(user => `
-                    <div class="pending-user">
-                        <div class="pending-user-info">
-                            <strong>${user.name}</strong> (${user.email})<br>
-                            <small>Requested: ${new Date(user.createdAt).toLocaleString()}</small>
-                        </div>
-                        <div class="pending-user-actions">
-                            <button class="btn btn-success" onclick="approveUser('${user.uid}')">Approve</button>
-                            <button class="btn btn-danger" onclick="rejectUser('${user.uid}')">Reject</button>
-                        </div>
-                    </div>
-                `).join('');
+                pendingUsersList.innerHTML = pending.map(user => 
+                    '<div class="pending-user">' +
+                        '<div class="pending-user-info">' +
+                            '<strong>' + user.name + '</strong> (' + user.email + ')<br>' +
+                            '<small>Requested: ' + new Date(user.createdAt).toLocaleString() + '</small>' +
+                        '</div>' +
+                        '<div class="pending-user-actions">' +
+                            '<button class="btn btn-success" onclick="approveUser(\'' + user.uid + '\')">Approve</button>' +
+                            '<button class="btn btn-danger" onclick="rejectUser(\'' + user.uid + '\')">Reject</button>' +
+                        '</div>' +
+                    '</div>'
+                ).join('');
             }
 
-            allUsersList.innerHTML = approved.map(user => `
-                <div class="post">
-                    <strong>${user.name}</strong> (${user.email})
-                    ${user.isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}
-                    <br>
-                    <small>Member since: ${new Date(user.createdAt).toLocaleString()}</small>
-                </div>
-            `).join('');
+            allUsersList.innerHTML = approved.map(user => 
+                '<div class="post">' +
+                    '<strong>' + user.name + '</strong> (' + user.email + ')' +
+                    (user.isAdmin ? '<span class="admin-badge">ADMIN</span>' : '') +
+                    '<br>' +
+                    '<small>Member since: ' + new Date(user.createdAt).toLocaleString() + '</small>' +
+                '</div>'
+            ).join('');
         }
 
         window.approveUser = async function(uid) {
-            await update(ref(db, `users/${uid}`), { status: 'approved' });
+            await update(ref(db, 'users/' + uid), { status: 'approved' });
             loadAdminPanel();
         };
 
         window.rejectUser = async function(uid) {
-            await set(ref(db, `users/${uid}`), null);
+            await set(ref(db, 'users/' + uid), null);
             loadAdminPanel();
         };
 
@@ -948,15 +945,15 @@
                 
                 posts.sort((a, b) => b.timestamp - a.timestamp);
                 
-                postsList.innerHTML = posts.map(post => `
-                    <div class="post">
-                        <div class="post-header">
-                            <span class="post-author">${post.author}</span>
-                            <span class="post-date">${new Date(post.timestamp).toLocaleString()}</span>
-                        </div>
-                        <div class="post-content">${post.content}</div>
-                    </div>
-                `).join('');
+                postsList.innerHTML = posts.map(post => 
+                    '<div class="post">' +
+                        '<div class="post-header">' +
+                            '<span class="post-author">' + post.author + '</span>' +
+                            '<span class="post-date">' + new Date(post.timestamp).toLocaleString() + '</span>' +
+                        '</div>' +
+                        '<div class="post-content">' + post.content + '</div>' +
+                    '</div>'
+                ).join('');
             });
         }
 
@@ -978,7 +975,7 @@
             });
 
             messageRecipient.innerHTML = '<option value="">Select a family member...</option>' +
-                users.map(user => `<option value="${user.id}">${user.name}</option>`).join('');
+                users.map(user => '<option value="' + user.id + '">' + user.name + '</option>').join('');
         }
 
         submitMessage.addEventListener('click', async () => {
@@ -1015,7 +1012,7 @@
                 
                 for (const msg of messages) {
                     if (msg.recipientId !== currentUser.uid && !userCache[msg.recipientId]) {
-                        const userSnapshot = await get(ref(db, `users/${msg.recipientId}`));
+                        const userSnapshot = await get(ref(db, 'users/' + msg.recipientId));
                         if (userSnapshot.exists()) {
                             userCache[msg.recipientId] = userSnapshot.val().name;
                         }
@@ -1027,17 +1024,15 @@
                 messagesList.innerHTML = messages.map(msg => {
                     const isReceived = msg.recipientId === currentUser.uid;
                     const recipientName = userCache[msg.recipientId] || 'Unknown';
-                    return `
-                        <div class="message">
-                            <div class="message-header">
-                                <span class="message-sender">
-                                    ${isReceived ? 'From: ' + msg.senderName : 'To: ' + recipientName}
-                                </span>
-                                <span class="message-date">${new Date(msg.timestamp).toLocaleString()}</span>
-                            </div>
-                            <div class="message-content">${msg.content}</div>
-                        </div>
-                    `;
+                    return '<div class="message">' +
+                        '<div class="message-header">' +
+                            '<span class="message-sender">' + 
+                                (isReceived ? 'From: ' + msg.senderName : 'To: ' + recipientName) +
+                            '</span>' +
+                            '<span class="message-date">' + new Date(msg.timestamp).toLocaleString() + '</span>' +
+                        '</div>' +
+                        '<div class="message-content">' + msg.content + '</div>' +
+                    '</div>';
                 }).join('');
             });
         }
@@ -1075,16 +1070,16 @@
                 
                 items.sort((a, b) => b.timestamp - a.timestamp);
                 
-                bulletinList.innerHTML = items.map(item => `
-                    <div class="bulletin-item">
-                        <div class="post-header">
-                            <h3 style="color: #667eea; margin-bottom: 5px;">${item.title}</h3>
-                            <span class="post-date">${new Date(item.timestamp).toLocaleString()}</span>
-                        </div>
-                        <p style="margin-top: 10px; color: #666;">${item.content}</p>
-                        <p style="margin-top: 10px; font-size: 12px; color: #999;">Posted by ${item.author}</p>
-                    </div>
-                `).join('');
+                bulletinList.innerHTML = items.map(item => 
+                    '<div class="bulletin-item">' +
+                        '<div class="post-header">' +
+                            '<h3 style="color: #667eea; margin-bottom: 5px;">' + item.title + '</h3>' +
+                            '<span class="post-date">' + new Date(item.timestamp).toLocaleString() + '</span>' +
+                        '</div>' +
+                        '<p style="margin-top: 10px; color: #666;">' + item.content + '</p>' +
+                        '<p style="margin-top: 10px; font-size: 12px; color: #999;">Posted by ' + item.author + '</p>' +
+                    '</div>'
+                ).join('');
             });
         }
 
@@ -1153,26 +1148,24 @@
             });
 
             let html = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-                .map(day => `<div class="calendar-header">${day}</div>`).join('');
+                .map(day => '<div class="calendar-header">' + day + '</div>').join('');
 
             for (let i = 0; i < firstDay; i++) {
                 html += '<div class="calendar-day"></div>';
             }
 
             for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
                 const dayEvents = events[dateStr] || [];
                 
-                html += `
-                    <div class="calendar-day">
-                        <div class="calendar-day-number">${day}</div>
-                        ${dayEvents.map(e => `
-                            <div class="calendar-event" title="${e.title} - ${e.author}">
-                                ${e.time ? e.time + ' - ' : ''}${e.title}
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+                html += '<div class="calendar-day">' +
+                    '<div class="calendar-day-number">' + day + '</div>' +
+                    dayEvents.map(e => 
+                        '<div class="calendar-event" title="' + e.title + ' - ' + e.author + '">' +
+                            (e.time ? e.time + ' - ' : '') + e.title +
+                        '</div>'
+                    ).join('') +
+                '</div>';
             }
 
             calendarGrid.innerHTML = html;
