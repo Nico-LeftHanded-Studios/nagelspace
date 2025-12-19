@@ -579,7 +579,7 @@
             <button class="nav-tab" data-tab="messages">Direct Messages</button>
             <button class="nav-tab" data-tab="bulletin">Bulletin Board</button>
             <button class="nav-tab" data-tab="calendar">Family Calendar</button>
-            <button class="nav-tab hidden" data-tab="admin">Admin Panel</button>
+            <button class="nav-tab hidden" data-tab="admin" id="adminTabButton">Admin Panel</button>
         </div>
 
         <div class="content-area">
@@ -698,7 +698,7 @@
         const authTitle = document.getElementById('authTitle');
         const logoutBtn = document.getElementById('logoutBtn');
         const userName = document.getElementById('userName');
-        const adminTab = document.getElementById('adminTab');
+        const adminTabButton = document.getElementById('adminTabButton');
 
         async function loadTheme() {
             try {
@@ -828,7 +828,7 @@
                 userName.textContent = currentUserData.name + (currentUserData.isAdmin ? ' (Admin)' : '');
                 
                 if (currentUserData.isAdmin) {
-                    adminTab.classList.remove('hidden');
+                    document.getElementById('adminTabButton').classList.remove('hidden');
                 }
                 
                 loadTheme();
